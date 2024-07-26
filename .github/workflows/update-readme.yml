@@ -1,0 +1,28 @@
+name: Update fetch link in README with Latest Commit ID
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get latest commit ID
+        id: commit-id
+        run: echo "commit-id=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Update README.md
+        run: sed -i -r "s/archive\/\w{40}/archive\/${{ steps.commit-id.outputs.commit-id }}/g" README.md
+
+
+      - name: Commit and push changes
+        run: |
+          git config user.name 'GitHub Actions'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add README.md
+          git commit -m "Update README.md with commit ID (${{ steps.commit-id.outputs.commit-id }})"
+          git push origin main
