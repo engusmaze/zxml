@@ -10,6 +10,7 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
+    b.modules.put("zxml", &lib.root_module) catch @panic("OOM");
     b.installArtifact(lib);
 
     const lib_unit_tests = b.addTest(.{
